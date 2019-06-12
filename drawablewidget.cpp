@@ -47,21 +47,17 @@ void DrawableWidget::saveListAnchor()
         return ;
     }
 
-    QJsonObject gameObject;
+    QJsonObject root;
 
+    // list of markers
     QJsonArray array;
     foreach (const Marker& marker, listAnchors)
     {
-        QJsonObject mo;
-        mo["label"] = marker.getLabel();
-        mo["x"] = marker.getX();
-        mo["y"] = marker.getY();
-
-        array.append(mo);
+        array.append(marker.toJson());
     }
-    gameObject["markers"] = array;
+    root["markers"] = array;
 
-    QJsonDocument saveDoc(gameObject);
+    QJsonDocument saveDoc(root);
     saveFile.write(saveDoc.toJson());
 
     qDebug() << saveDoc.toJson();
@@ -78,8 +74,11 @@ void DrawableWidget::paintEvent(QPaintEvent *evt)
     // draw anchors
     int mw = pixMarker.size().width();
     int mh = pixMarker.size().height();
-    for (Marker &anchor : listAnchors)
-        painter.drawPixmap(anchor.getX() - mw/2, anchor.getY() - mh, pixMarker);
+    for (Marker &marker : listAnchors)
+    {
+        QPointF anchor = marker.getPos();
+        painter.drawPixmap(anchor.x() - mw/2, anchor.y() - mh, pixMarker);
+    }
 }
 
 void DrawableWidget::mouseMoveEvent(QMouseEvent *evt)

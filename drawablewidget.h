@@ -5,7 +5,8 @@
 #include <QMouseEvent>
 #include <QPoint>
 #include <QVector>
-#include <anchor.h>
+
+#include "camera/camera.h"
 
 namespace Ui {
 class DrawableWidget;
