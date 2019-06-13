@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 
+#include "camera/markermanager.h"
+
 namespace Ui {
 class MainWindow;
 }
@@ -15,11 +17,15 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+    bool init();
+
 protected slots:
     void currentMousePosition(QPoint pos);
 
 private:
     Ui::MainWindow *ui;
+
+    MarkerManager *manager = NULL;
 };
 
 #endif // MAINWINDOW_H

@@ -1,7 +1,7 @@
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QJsonObject>
-
+#include <QDebug>
 #include <QFile>
 
 #include "markermanager.h"
@@ -12,11 +12,21 @@ MarkerManager *MarkerManager::getInstance()
 {
     if (instance == NULL)
         instance = new MarkerManager();
-
-
-
-
     return instance;
+}
+
+void MarkerManager::destroyManager()
+{
+    if (instance)
+    {
+        // free all markers
+        qDeleteAll(listMarkers);
+        listMarkers.clear();
+
+        // free manager
+        delete instance;
+        instance = NULL;
+    }
 }
 
 bool MarkerManager::load(const QString &path)
@@ -50,6 +60,7 @@ bool MarkerManager::load(const QString &path)
         if (objMarker.contains("borders"))
         {
             // this is a camera
+            // borders
             marker = new Camera(label, x, y);
             QJsonArray arrBorders = objMarker["borders"].toArray();
 
@@ -57,6 +68,13 @@ bool MarkerManager::load(const QString &path)
             {
                 marker->addBorder(arrBorders[k].toString());
             }
+
+            // pixel
+            QJsonArray arrPixel = objMarker["pixel"].toArray();
+            marker->setPixel(arrPixel[0].toDouble(), arrPixel[1].toDouble());
+
+            // background path
+            marker->setImagePath(objMarker["bgPath"].toString());
         }
         else
         {
@@ -73,5 +91,50 @@ bool MarkerManager::load(const QString &path)
         map[label] = marker;
     }
 
+    return true;
+}
 
+bool MarkerManager::save(const QString &path)
+{
+    QFile saveFile(path);
+
+    if (!saveFile.open(QIODevice::WriteOnly)) {
+        qWarning("Couldn't open save file.");
+        return false;
+    }
+
+    QJsonObject root;
+
+    // list of markers
+    QJsonArray array;
+    foreach (Marker *marker, listMarkers)
+    {
+        array.append(marker->toJson());
+    }
+    root["markers"] = array;
+
+    QJsonDocument saveDoc(root);
+    saveFile.write(saveDoc.toJson());
+
+    return true;
+}
+
+void MarkerManager::addMarker(Marker *marker)
+{
+    listMarkers.append(marker);
+    map[marker->getLabel()] = marker;
+}
+
+Marker *MarkerManager::getMarker(int index)
+{
+    int num = listMarkers.length();
+    if (index < num && index >=0)
+        return listMarkers[index];
+    else
+        return NULL;
+}
+
+int MarkerManager::numberOfMarkers()
+{
+    return listMarkers.length();
 }

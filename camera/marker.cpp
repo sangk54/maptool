@@ -24,12 +24,14 @@ QJsonObject Marker::toJson() const
 {
     QJsonObject root;
 
+    // position marker
     QJsonArray array;
     array.append(QJsonValue(label));
     array.append(QJsonValue(pos.x()));
     array.append(QJsonValue(pos.y()));
     root["pos"] = array;
 
+    // reference marker
     QJsonArray refArray;
     refArray.append(QJsonValue(refLabel1));
     refArray.append(QJsonValue(refDistance1));
@@ -45,16 +47,27 @@ void Marker::addBorder(const QString &label)
     Q_UNUSED(label)
 }
 
+void Marker::setPixel(float x, float y)
+{
+    Q_UNUSED(x);
+    Q_UNUSED(y);
+}
+
+void Marker::setImagePath(const QString &path)
+{
+    Q_UNUSED(path);
+}
+
 void Marker::setReferenceMarker(const QString &theLabel, float distance, int oneOrTwo)
 {
     if (oneOrTwo == 1)
     {
-        this->label = theLabel;
+        this->refLabel1 = theLabel;
         refDistance1 = distance;
     }
     else
     {
-        this->label = theLabel;
+        this->refLabel2 = theLabel;
         refDistance2 = distance;
     }
 }

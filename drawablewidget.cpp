@@ -20,11 +20,13 @@ DrawableWidget::DrawableWidget(QWidget *parent) :
     pixMarker = QPixmap::fromImage(QImage(":/images/marker.png"));
 
     this->setMouseTracking(true);
+
+
+    manager = MarkerManager::getInstance();
 }
 
 DrawableWidget::~DrawableWidget()
 {
-    saveListMarker();
     delete ui;
 }
 
@@ -33,39 +35,10 @@ QSize DrawableWidget::sizeHint() const
     return pixBg.size();
 }
 
-void DrawableWidget::loadListMarker()
-{
-
-}
-
-void DrawableWidget::saveListMarker()
-{
-    QFile saveFile("anchor.json");
-
-    if (!saveFile.open(QIODevice::WriteOnly)) {
-        qWarning("Couldn't open save file.");
-        return ;
-    }
-
-    QJsonObject root;
-
-    // list of markers
-    QJsonArray array;
-    foreach (const Marker& marker, listMarkers)
-    {
-        array.append(marker.toJson());
-    }
-    root["markers"] = array;
-
-    QJsonDocument saveDoc(root);
-    saveFile.write(saveDoc.toJson());
-
-    qDebug() << saveDoc.toJson();
-    return ;
-}
 
 void DrawableWidget::paintEvent(QPaintEvent *evt)
 {
+    Q_UNUSED(evt);
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
 
@@ -75,18 +48,23 @@ void DrawableWidget::paintEvent(QPaintEvent *evt)
     // draw markers
     painter.setPen(QPen(Qt::black, 12, Qt::SolidLine, Qt::RoundCap));
     painter.setBrush(QBrush(Qt::red, Qt::SolidPattern));
+
     QFont myFont("Arial", 12);
     QFontMetrics fm(myFont);
+    painter.setFont(myFont);
 
     int mw = pixMarker.size().width();
     int mh = pixMarker.size().height();
-    for (Marker &marker : listMarkers)
+
+    int numMarkers = manager->numberOfMarkers();
+    for (int i = 0; i < numMarkers; i++)
     {
-        QPointF center = marker.getPos();
+        Marker *marker = manager->getMarker(i);
+        QPointF center = marker->getPos();
         painter.drawPixmap(center.x() - mw/2, center.y() - mh, pixMarker);
 
-        int tw = fm.width(marker.getLabel());
-        painter.drawText(center.x() - tw/2, center.y() - mh, marker.getLabel());
+        int tw = fm.width(marker->getLabel());
+        painter.drawText(center.x() - tw/2, center.y() - mh-5, marker->getLabel());
     }
 }
 
@@ -107,24 +85,43 @@ void DrawableWidget::showContextMenu(const QPoint &pos)
 {
    QMenu contextMenu(tr("Context menu"), this);
 
-   QAction action1("Add anchor", this);
+   QAction action1("Add marker", this);
    action1.setData(pos);
    connect(&action1, SIGNAL(triggered()), this, SLOT(addMarker()));
    contextMenu.addAction(&action1);
+
+   QAction action2("Add camera", this);
+   action2.setData(pos);
+   connect(&action2, SIGNAL(triggered()), this, SLOT(addCamera()));
+   contextMenu.addAction(&action2);
+
 
    contextMenu.exec(mapToGlobal(pos));
 }
 
 void DrawableWidget::addMarker()
 {
-    QString text = QInputDialog::getText(this, "Add new anchor", "Enter label:");
+    QString text = QInputDialog::getText(this, "Add new marker", "Enter label:");
     if (text.isEmpty())
         return;
 
     QAction *act = (QAction*)sender();
     QPoint pos = act->data().toPoint();
 
-    listMarkers.append(Marker(text, pos.x(), pos.y()));
+    manager->addMarker(new Marker(text, pos.x(), pos.y()));
+    repaint();
+}
+
+void DrawableWidget::addCamera()
+{
+    QString text = QInputDialog::getText(this, "Add new camera", "Enter label:");
+    if (text.isEmpty())
+        return;
+
+    QAction *act = (QAction*)sender();
+    QPoint pos = act->data().toPoint();
+
+    manager->addMarker(new Camera(text, pos.x(), pos.y()));
     repaint();
 }
 

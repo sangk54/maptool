@@ -11,11 +11,14 @@ class Camera : public Marker
 public:
     Camera(const QString &label = "", float x = 0, float y = 0);
     Camera(const QString &label, const QPointF &pos);
+    ~Camera(){}
 
     int type() const;
     QJsonObject toJson() const;
-    void addBorder(const QString &label);
 
+    void addBorder(const QString &label);
+    void setPixel(float x, float y);
+    void setImagePath(const QString &path);
 private:
     // pixel cordinate
     QPointF pixel;

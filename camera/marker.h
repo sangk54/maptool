@@ -12,10 +12,13 @@ public:
     enum {ANCHOR, CAMERA};
     Marker(const QString &label = "", float x = 0, float y = 0);
     Marker(const QString &label, const QPointF &p);
+    virtual ~Marker() {}
 
     virtual int type() const;
     virtual QJsonObject toJson() const;
     virtual void addBorder(const QString &label);
+    virtual void setPixel(float x, float y);
+    virtual void setImagePath(const QString &path);
 
     void setReferenceMarker(const QString &theLabel, float distance, int oneOrTwo);
 

@@ -7,6 +7,7 @@
 #include <QVector>
 
 #include "camera/camera.h"
+#include "camera/markermanager.h"
 
 namespace Ui {
 class DrawableWidget;
@@ -21,9 +22,6 @@ public:
     ~DrawableWidget();
     QSize sizeHint() const;
 
-    void loadListMarker();
-    void saveListMarker();
-
 protected:
     void paintEvent(QPaintEvent *evt);
     void mouseMoveEvent(QMouseEvent* evt);
@@ -34,6 +32,7 @@ protected:
 
 protected slots:
     void addMarker();
+    void addCamera();
 signals:
     void currentMousePosition(QPoint pos);
 private:
@@ -41,7 +40,7 @@ private:
     QPixmap pixBg, pixMarker;
 
 
-    QVector<Marker> listMarkers;
+    MarkerManager *manager = NULL;
 };
 
 #endif // DRAWABLEWIDGET_H
