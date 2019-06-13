@@ -15,6 +15,7 @@ public:
 
     virtual int type() const;
     virtual QJsonObject toJson() const;
+    virtual void addBorder(const QString &label);
 
     void setReferenceMarker(const QString &theLabel, float distance, int oneOrTwo);
 

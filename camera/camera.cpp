@@ -39,3 +39,8 @@ QJsonObject Camera::toJson() const
 
     return root;
 }
+
+void Camera::addBorder(const QString &label)
+{
+    listBorders.append(label);
+}

@@ -21,9 +21,8 @@ public:
     ~DrawableWidget();
     QSize sizeHint() const;
 
-    void loadListAnchor();
-    void saveListAnchor();
-
+    void loadListMarker();
+    void saveListMarker();
 
 protected:
     void paintEvent(QPaintEvent *evt);
@@ -34,7 +33,7 @@ protected:
 
 
 protected slots:
-    void addAnchor();
+    void addMarker();
 signals:
     void currentMousePosition(QPoint pos);
 private:
@@ -42,7 +41,7 @@ private:
     QPixmap pixBg, pixMarker;
 
 
-    QVector<Marker> listAnchors;
+    QVector<Marker> listMarkers;
 };
 
 #endif // DRAWABLEWIDGET_H

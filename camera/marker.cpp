@@ -40,6 +40,11 @@ QJsonObject Marker::toJson() const
     return root;
 }
 
+void Marker::addBorder(const QString &label)
+{
+    Q_UNUSED(label)
+}
+
 void Marker::setReferenceMarker(const QString &theLabel, float distance, int oneOrTwo)
 {
     if (oneOrTwo == 1)

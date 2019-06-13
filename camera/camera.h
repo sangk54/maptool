@@ -14,6 +14,7 @@ public:
 
     int type() const;
     QJsonObject toJson() const;
+    void addBorder(const QString &label);
 
 private:
     // pixel cordinate
@@ -21,7 +22,7 @@ private:
     QString bgPath;
 
     // list of border markers
-    QVector<QString> listMarkers;
+    QVector<QString> listBorders;
 };
 
 #endif // CAMERA_H

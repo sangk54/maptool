@@ -16,15 +16,21 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     drawablewidget.cpp \
     camera/camera.cpp \
-    camera/marker.cpp
+    camera/marker.cpp \
+    camera/markermanager.cpp
 
 HEADERS  += mainwindow.h \
     drawablewidget.h \
     camera/camera.h \
-    camera/marker.h
+    camera/marker.h \
+    camera/markermanager.h
 
 FORMS    += mainwindow.ui \
     drawablewidget.ui
 
 RESOURCES += \
     resources.qrc
+
+OBJECTS_DIR = obj
+MOC_DIR = moc
+UI_DIR = ui
