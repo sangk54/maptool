@@ -4,6 +4,7 @@
 #include <QMainWindow>
 
 #include "camera/markermanager.h"
+#include "drawablewidget.h"
 
 namespace Ui {
 class MainWindow;
@@ -24,7 +25,6 @@ protected slots:
 
 private:
     Ui::MainWindow *ui;
-
     MarkerManager *manager = NULL;
 };
 

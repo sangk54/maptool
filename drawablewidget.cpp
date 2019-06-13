@@ -6,6 +6,8 @@
 #include <QJsonObject>
 #include <QJsonArray>
 
+#include <QGraphicsPixmapItem>
+
 #include "drawablewidget.h"
 #include "ui_drawablewidget.h"
 
@@ -23,6 +25,11 @@ DrawableWidget::DrawableWidget(QWidget *parent) :
 
 
     manager = MarkerManager::getInstance();
+
+    scene = new QGraphicsScene(this);
+    ui->graphicsView->setScene(scene);
+
+    initScene();
 }
 
 DrawableWidget::~DrawableWidget()
@@ -36,22 +43,16 @@ QSize DrawableWidget::sizeHint() const
 }
 
 
-void DrawableWidget::paintEvent(QPaintEvent *evt)
+void DrawableWidget::initScene()
 {
-    Q_UNUSED(evt);
-    QPainter painter(this);
-    painter.setRenderHint(QPainter::Antialiasing, true);
+    QGraphicsPixmapItem *itemBg = new QGraphicsPixmapItem(
+                    QPixmap::fromImage(QImage(":/images/layout-1.png")));
 
-    // draw background
-    painter.drawPixmap(0, 0, pixBg);
-
-    // draw markers
-    painter.setPen(QPen(Qt::black, 12, Qt::SolidLine, Qt::RoundCap));
-    painter.setBrush(QBrush(Qt::red, Qt::SolidPattern));
+    scene->addItem(itemBg);
+    itemBg->setPos(0, 0);
 
     QFont myFont("Arial", 12);
     QFontMetrics fm(myFont);
-    painter.setFont(myFont);
 
     int mw = pixMarker.size().width();
     int mh = pixMarker.size().height();
@@ -61,12 +62,53 @@ void DrawableWidget::paintEvent(QPaintEvent *evt)
     {
         Marker *marker = manager->getMarker(i);
         QPointF center = marker->getPos();
-        painter.drawPixmap(center.x() - mw/2, center.y() - mh, pixMarker);
 
+        // draw pixmap
+        QGraphicsPixmapItem *itemMarker = new QGraphicsPixmapItem(pixMarker);
+        scene->addItem(itemMarker);
+        itemMarker->setPos(center.x() - mw/2, center.y() - mh);
+        itemMarker->setFlag(QGraphicsItem::ItemIsMovable);
+
+        // draw label
         int tw = fm.width(marker->getLabel());
-        painter.drawText(center.x() - tw/2, center.y() - mh-5, marker->getLabel());
+        int th = fm.height();
+        QGraphicsTextItem *itemText = scene->addText(marker->getLabel(), myFont);
+        itemText->setPos(center.x() - tw/2, center.y() - mh - th - 5);
+        itemText->setFlag(QGraphicsItem::ItemIsMovable);
     }
 }
+
+//void DrawableWidget::paintEvent(QPaintEvent *evt)
+//{
+//    Q_UNUSED(evt);
+//    QPainter painter(this);
+//    painter.setRenderHint(QPainter::Antialiasing, true);
+
+//    // draw background
+//    painter.drawPixmap(0, 0, pixBg);
+
+//    // draw markers
+//    painter.setPen(QPen(Qt::black, 12, Qt::SolidLine, Qt::RoundCap));
+//    painter.setBrush(QBrush(Qt::red, Qt::SolidPattern));
+
+//    QFont myFont("Arial", 12);
+//    QFontMetrics fm(myFont);
+//    painter.setFont(myFont);
+
+//    int mw = pixMarker.size().width();
+//    int mh = pixMarker.size().height();
+
+//    int numMarkers = manager->numberOfMarkers();
+//    for (int i = 0; i < numMarkers; i++)
+//    {
+//        Marker *marker = manager->getMarker(i);
+//        QPointF center = marker->getPos();
+//        painter.drawPixmap(center.x() - mw/2, center.y() - mh, pixMarker);
+
+//        int tw = fm.width(marker->getLabel());
+//        painter.drawText(center.x() - tw/2, center.y() - mh-5, marker->getLabel());
+//    }
+//}
 
 void DrawableWidget::mouseMoveEvent(QMouseEvent *evt)
 {

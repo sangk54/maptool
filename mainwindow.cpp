@@ -8,7 +8,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
 
-    connect(ui->widget, SIGNAL(currentMousePosition(QPoint)),
+    connect(ui->canvas, SIGNAL(currentMousePosition(QPoint)),
             this, SLOT(currentMousePosition(QPoint)));
 
     init();
@@ -25,7 +25,7 @@ bool MainWindow::init()
 {
     manager = MarkerManager::getInstance();
     manager->load("marker.json");
-
+    ui->canvas->initScene();
 
     return true;
 }

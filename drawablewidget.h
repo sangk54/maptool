@@ -5,6 +5,7 @@
 #include <QMouseEvent>
 #include <QPoint>
 #include <QVector>
+#include <QGraphicsScene>
 
 #include "camera/camera.h"
 #include "camera/markermanager.h"
@@ -22,8 +23,10 @@ public:
     ~DrawableWidget();
     QSize sizeHint() const;
 
+    void initScene();
+
 protected:
-    void paintEvent(QPaintEvent *evt);
+//    void paintEvent(QPaintEvent *evt);
     void mouseMoveEvent(QMouseEvent* evt);
     void mouseReleaseEvent(QMouseEvent *evt);
 
@@ -41,6 +44,8 @@ private:
 
 
     MarkerManager *manager = NULL;
+
+    QGraphicsScene *scene = NULL;
 };
 
 #endif // DRAWABLEWIDGET_H
