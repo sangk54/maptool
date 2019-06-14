@@ -1,12 +1,13 @@
 #ifndef MARKER_H
 #define MARKER_H
 
+#include <QGraphicsItem>
 #include <QPointF>
 #include <QString>
 
 #include <QJsonObject>
 
-class Marker
+class Marker : public QGraphicsItem
 {
 public:
     enum {ANCHOR, CAMERA};
